@@ -1,0 +1,39 @@
+name: Build Windows EXE
+
+# 触发条件：push 到 main/master，或手动在 Actions 页面触发
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: 安装依赖
+        shell: pwsh
+        run: |
+          pip install --upgrade pip
+          pip install pyinstaller
+          if (Test-Path requirements.txt) { pip install -r requirements.txt }
+
+      - name: 打包 EXE
+        shell: pwsh
+        run: pyinstaller --onefile --name myapp --clean --noconfirm main.py
+
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: dist/*.exe
+          if-no-files-found: error
