@@ -29,7 +29,7 @@ jobs:
 
       - name: 打包 EXE
         shell: pwsh
-        run: pyinstaller --onefile --name myapp --clean --noconfirm main.py
+        run: pyinstaller --onefile --name renamer --clean --noconfirm renamer.py
 
       - name: 上传产物
         uses: actions/upload-artifact@v4
